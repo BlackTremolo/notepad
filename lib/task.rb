@@ -9,9 +9,8 @@ class Task < Post
     puts 'Что нужно сделать?'
     @text = STDIN.gets.strip
 
-    puts 'До какого числа нужно это сделать'
+    puts 'До какого числа нужно это сделать(д.м.г)'
     input = STDIN.gets.strip
-
     @dui_date = Date.parse(input)
   end
 

@@ -32,10 +32,11 @@ class Post
   end
 
   def file_path
-    current_path = File.dirname(__FILE__)
+    #current_path = File.dirname(__FILE__)
     file_name = @created_at.strftime("#{self.class.name}_%Y.%m.%d, %H:%M:%S")
 
-    current_path + '/' + file_name
+    #current_path + "/blabla/#{self.class.name}/" + file_name
+    "./blabla/#{self.class.name}/" + file_name
   end
   # PS: Весь набор методов, объявленных в родительском классе называется интерфейсом класса
   # Дети могут по–разному реализовывать методы, но они должны подчиняться общей идее
