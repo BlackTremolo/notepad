@@ -1,6 +1,6 @@
 class Post
   def self.post_types
-    [Meme, Task, Link]
+    [Memo, Task, Link]
   end
 
   def self.create(type_index)
@@ -22,7 +22,20 @@ class Post
 
   #сохранение в файл
   def save
+    file = File.new(file_path, 'w')
 
+    for el in to_strings
+      file.puts el
+    end
+
+    file.close
+  end
+
+  def file_path
+    current_path = File.dirname(__FILE__)
+    file_name = @created_at.strftime("#{self.class.name}_%Y.%m.%d, %H:%M:%S")
+
+    current_path + '/' + file_name
   end
   # PS: Весь набор методов, объявленных в родительском классе называется интерфейсом класса
   # Дети могут по–разному реализовывать методы, но они должны подчиняться общей идее
