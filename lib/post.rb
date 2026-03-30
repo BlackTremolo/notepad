@@ -28,6 +28,23 @@ class Post
         post.load_data(result)
         return post
       end
+    else
+      db.results_as_hash = false
+
+      query = "select rowid, * from posts "
+      query += "where type = :type " unless type.nil?
+      query += "order by rowid desc "
+      query += "limit :limit" unless limit.nil?
+
+      statment = db.prepare(query)
+      statment.bind_param('type', type) unless  type.nil?
+      statment.bind_param('limit', limit) unless  limit.nil?
+
+      result = statment.execute!
+      statment.close
+      db.close
+
+      result
     end
 
   end
@@ -46,7 +63,7 @@ class Post
   end
 
   #сохранение в файл
-  def save
+  def save_to_file
     file = File.new(file_path, 'w')
 
     for el in to_strings
