@@ -22,4 +22,4 @@ entry.read_from_console
 
 id = entry.save_to_db
 
-puts "Запись добавлена , i: #{id}"
+puts "Запись добавлена , id: #{id}"

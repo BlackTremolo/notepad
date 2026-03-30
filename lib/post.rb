@@ -33,7 +33,7 @@ class Post
   end
   def initialize
     @text = nil
-    @created_at = Time.now
+    @created_at = (Time.now).to_s
   end
   #запись данных из консоли в нужные поля
   def read_from_console

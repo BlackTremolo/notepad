@@ -14,8 +14,9 @@ class Memo < Post
     @text.pop
   end
   def to_strings
-    time_string = "Создано: #{@created_at.strftime('%Y.%m.%d, %H:%M:%S')}\n"
-    @text.unshift time_string
+    time_string = "Создано: #{@created_at}\n"
+    @text = @text.split('\n')
+    [@text].unshift time_string
   end
 
   def to_db_hash
