@@ -23,8 +23,11 @@ OptionParser.new do |opt|
 end.parse!
 
 #поиск записей в бд
-result = Post.find(options[:type], options[:id], options[:limit])
-
+if options[:id] != nil
+  result = Post.find_by_id(options[:id])
+else
+  result = Post.find_all(options[:type], options[:id], options[:limit])
+end
 
 if result.is_a? Post
   puts "Запись #{result.class.name}, id: #{options[:id]}"

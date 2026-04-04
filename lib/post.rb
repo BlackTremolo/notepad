@@ -10,13 +10,18 @@ class Post
     post_types[type].new
   end
 
-  def self.find(type, id, limit)
+  def self.find_by_id id
     db = SQLite3::Database.open(@@SQLITE_DB_FILE)
 
     if !id.nil?
       db.results_as_hash = true
 
-      result = db.execute("select * from posts where rowid=?", id)
+      begin
+        result = db.execute("select * from posts where rowid=?", id)
+      rescue SQLite3::SQLException => e
+        abort "Таблица posts не найдена #{e.message}"
+      end
+
       result = result[0] if result.is_a? Array
       db.close
 
@@ -28,25 +33,34 @@ class Post
         post.load_data(result)
         return post
       end
-    else
-      db.results_as_hash = false
-
-      query = "select rowid, * from posts "
-      query += "where type = :type " unless type.nil?
-      query += "order by rowid desc "
-      query += "limit :limit" unless limit.nil?
-
-      statment = db.prepare(query)
-      statment.bind_param('type', type) unless  type.nil?
-      statment.bind_param('limit', limit) unless  limit.nil?
-
-      result = statment.execute!
-      statment.close
-      db.close
-
-      result
     end
+  end
+  def self.find_all(type, id, limit)
+    db = SQLite3::Database.open(@@SQLITE_DB_FILE)
 
+    db.results_as_hash = false
+
+    query = "select rowid, * from posts "
+    query += "where " unless  type.nil? || id.nil?
+    query += "type = :type " unless type.nil?
+    query += "rowid = :id " unless id.nil?
+    query += "order by rowid desc "
+    query += "limit :limit" unless limit.nil?
+
+    begin
+      statment = db.prepare(query)
+    rescue SQLite3::SQLException => e
+      abort "Таблица posts не найдена #{e.message}"
+    end
+    statment.bind_param('type', type) unless  type.nil?
+    statment.bind_param('limit', limit) unless  limit.nil?
+    statment.bind_param('id', id) unless  id.nil?
+
+    result = statment.execute!
+    statment.close
+    db.close
+
+    result
   end
   def initialize
     @text = nil
@@ -80,17 +94,21 @@ class Post
     #current_path + "/blabla/#{self.class.name}/" + file_name
     "./blabla/#{self.class.name}/" + file_name
   end
-
   #сохранение в базу данных
   def save_to_db
     db = SQLite3::Database.open(@@SQLITE_DB_FILE)
+
     db.results_as_hash = true
 
+    begin
     db.execute(
       "INSERT INTO posts (" + to_db_hash.keys.join(', ') + ")" +
       "VALUES (" + ('?,' * to_db_hash.keys.size).chomp(',') + ")",
       to_db_hash.values
     )
+    rescue SQLite3::SQLException => e
+      abort "Таблица posts не найдена #{e.message}"
+    end
     insert_row_id = db.last_insert_row_id
     db.close
 
