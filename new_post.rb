@@ -3,8 +3,8 @@ require_relative 'lib/memo'
 require_relative 'lib/link'
 require_relative 'lib/task'
 
-puts 'Я твой блокнот'
-puts 'Что хотите записать в блокнот'
+puts 'Это блокнот'
+puts 'Что хотите записать в блокнот?'
 
 choices = Post.post_types.keys
 
